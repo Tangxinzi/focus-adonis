@@ -20,4 +20,4 @@ const Route = use('Route')
 
 Route.get('/', 'IndexController.render')
 Route.get('detail', 'DetailController.render')
-Route.get('detail/source', 'DetailController.source')
+Route.get('detail/source', 'SourceController.render')

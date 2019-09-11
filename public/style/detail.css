@@ -32,6 +32,10 @@
   color: #666;
 }
 
+.ui.items>.item>.content p {
+  overflow: hidden;
+}
+
 @keyframes slideUp {
   0% {
     transform: translateY(40px);

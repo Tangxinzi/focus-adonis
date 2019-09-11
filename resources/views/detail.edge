@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link rel="icon" href="logo-violet.png" />
   <title>{{ wd }} - 搜索结果</title>
   {{ style('semantic/dist/semantic.min') }}
   {{ style('style/detail') }}
@@ -9,10 +11,10 @@
 <body>
   <div class="ui container">
     <div class="ui grid centered">
-      <div class="fifteen wide column">
+      <div class="sixteen wide mobile fifteen wide computer column">
         @!component('components.navigator')
       </div>
-      <div class="ten wide column">
+      <div class="sixteen wide mobile ten wide computer column">
         <div class="ui gray message">
           <strong>「{{ wd }}」</strong>相关结果，相关资源为您找到约 {{ dataset.num }}，百度云盘结果 {{ baiduyun.num }} 条
         </div>
@@ -63,22 +65,18 @@
           @endeach
         </div>
       </div>
-      <div class="five wide column">
+      <div class="sixteen wide mobile five wide computer column">
         @each(data in [0, 1, 2])
-        <div class="ui card">
-          <div class="content">
-            <div class="right floated meta">14h</div>Elliot </div>
-          <div class="image">
-            <img>
-          </div>
-          <div class="content"><span class="right floated"> <i class="heart outline like icon"></i> 17 likes </span> <i class="comment icon"></i> 3 comments </div>
-          <div class="extra content">
-            <div class="ui large transparent left icon input">
-              <i class="heart outline icon"></i>
-              <input type="text" placeholder="Add Comment...">
-            </div>
-          </div>
-        </div>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <ins class="adsbygoogle"
+          style="display:block"
+          data-ad-format="fluid"
+          data-ad-layout-key="-f9+5v+4m-d8+7b"
+          data-ad-client="ca-pub-8061733603127258"
+          data-ad-slot="9845064267"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
         @endeach
       </div>
     </div>
