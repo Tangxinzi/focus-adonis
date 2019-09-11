@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{{ wd }} - 搜索结果</title>
+  {{ style('semantic/dist/semantic.min') }}
+  {{ style('style/detail') }}
+</head>
+<body>
+  <div class="ui container">
+    <div class="ui grid centered">
+      <div class="fifteen wide column">
+        @!component('components.navigator')
+      </div>
+      <div class="ten wide column">
+        <div class="ui gray message">
+          <strong>「{{ wd }}」</strong>相关结果，相关资源为您找到约 {{ dataset.num }}，百度云盘结果 {{ baiduyun.num }} 条
+        </div>
+        <div class="ui tabular menu" style="margin-bottom: 0">
+          <a class="item active" data-tab="tab-movie-resource">相关资源</a>
+          <a class="item" data-tab="tab-baiduyun">百度云盘</a>
+        </div>
+        <div class="ui divided items card bottom attached tab segment active" data-tab="tab-movie-resource">
+          @each(data in dataset.dataset)
+          <div class="item">
+            <div class="content">
+              <a class="header" href="/detail/source?id={{ data.href.id }}&type={{ data.href.type }}&p=source">{{ data.title }}</a>
+              <div class="meta">
+                @if(data.time)
+                <span class="time">时间：{{ data.time }}</span>
+                @endif
+              </div>
+              <div class="extra">
+                @if(data.douban)
+                <div class="ui green label">豆瓣 {{ data.douban }}</div>
+                @endif
+                @if(data.imdb)
+                <div class="ui orange label">IMDB {{ data.imdb }}</div>
+                @endif
+              </div>
+            </div>
+          </div>
+          @endeach
+        </div>
+        <div class="ui divided items card bottom attached tab segment baiduyun" data-tab="tab-baiduyun">
+          @each(data in baiduyun.dataset)
+          <div class="item">
+            <div class="content">
+              <a class="header" href="/detail/source?id={{ data.href }}&p=baiduyun">{{ data.text }}</a>
+              <div class="extra">
+                <div class="ui label">时间：{{ data.date }}</div>
+                <div class="ui label">文件大小：{{ data.size }}</div>
+              </div>
+              @if(data.detail.length)
+              <div class="description">
+                @each(detail in data.detail)
+                <p>{{ detail }}</p>
+                @endeach
+              </div>
+              @endif
+            </div>
+          </div>
+          @endeach
+        </div>
+      </div>
+      <div class="five wide column">
+        @each(data in [0, 1, 2])
+        <div class="ui card">
+          <div class="content">
+            <div class="right floated meta">14h</div>Elliot </div>
+          <div class="image">
+            <img>
+          </div>
+          <div class="content"><span class="right floated"> <i class="heart outline like icon"></i> 17 likes </span> <i class="comment icon"></i> 3 comments </div>
+          <div class="extra content">
+            <div class="ui large transparent left icon input">
+              <i class="heart outline icon"></i>
+              <input type="text" placeholder="Add Comment...">
+            </div>
+          </div>
+        </div>
+        @endeach
+      </div>
+    </div>
+  </div>
+  {{ script('http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js') }}
+  {{ script('semantic/dist/semantic.min') }}
+  <script type="text/javascript">
+    $('.tabular.menu .item')
+      .tab()
+  </script>
+</body>
+</html>

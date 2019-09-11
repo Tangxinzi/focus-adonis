@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:300');
+
+.ui.divided.items>.item {
+  padding: 1em;
+  background: #FFF;
+  border-top: 0.5px solid rgba(0, 0, 0, 0.23);
+  min-height: 100px;
+}
+
+.ui.divided.items > .item:first-child,
+.ui.divided.items > .item:last-child {
+  padding: 1em !important;
+}
+
+.ui.card {
+  width: 100%;
+}
+
+.ui.menu>.item.logo:first-child {
+  background: url(/logo-violet.svg) no-repeat;
+  width: 86px;
+  background-size: cover;
+  opacity: 1;
+  animation: slideUp 1s cubic-bezier(0.19, 1, 0.30, 1) 0.8s forwards;
+  padding: 0;
+}
+
+.baiduyun .description {
+  padding: 1em;
+  background: #f8f8f8;
+  border-radius: 5px;
+  color: #666;
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.2%;
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
