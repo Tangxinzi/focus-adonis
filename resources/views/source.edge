@@ -58,16 +58,29 @@
           <div class="content">
             <div class="meta" style="margin-top: 0;">
               <div class="ui list">
-              @each(data in dataset.content.download)
                 <div class="item">
                   <div class="right floated content">
-                    <a class="ui gray label" href="{{ data.href }}">ED2K</a>
+                    <a class="ui grey label" href="{{ dataset.baiduyun.href }}" target="_blank" rel="noreferrer">百度</a>
                   </div>
                   <div class="content">
-                    <p><a href="{{ data.href }}" target="_blank">{{ data.text }}</a></p>
+                    <p><a href="{{ dataset.baiduyun.href }}" target="_blank" rel="noreferrer">{{ dataset.baiduyun.text }} {{ dataset.baiduyun.pass }}</a></p>
                   </div>
                 </div>
-              @endeach
+                @each(data in dataset.download)
+                @if(data.size)
+                <div class="item">
+                  <div class="right floated content">
+                    <span class="ui label">{{ data.size }}</span>
+                    @each(label in data.label)
+                    <a class="ui {{ label.color }} label" href="{{ label.href }}" target="_blank" rel="noreferrer">{{ label.text }}</a>
+                    @endeach
+                  </div>
+                  <div class="content">
+                    <p><a href="{{ data.href }}" target="_blank" target="_blank" rel="noreferrer">{{ data.text }}</a></p>
+                  </div>
+                </div>
+                @endif
+                @endeach
               </div>
             </div>
           </div>
@@ -96,12 +109,12 @@
                   更新日期 {{ dataset.info.date }}
                 </a>
                 <div class="ui right floated">
-                  @if(baiduyun.pass)
+                  @if(dataset.baiduyun.pass)
                   <span class="ui purple label">
-                    {{ baiduyun.pass }}
+                    {{ dataset.baiduyun.pass }}
                   </span>
                   @endif
-                  <a class="ui blue label" href="{{ baiduyun.href }}" target="_blank" rel="noreferrer">
+                  <a class="ui blue label" href="{{ dataset.baiduyun.href }}" target="_blank" rel="noreferrer">
                     网盘下载
                   </a>
                 </div>

@@ -5,72 +5,87 @@ const cheerio       = use('cheerio')
 const phantom       = use('phantom')
 
 class DetailController {
-  htmlToSearchMovieSourceData (html) {
-    const $ = cheerio.load(html.text)
-    const content = $('.content')
-    let dataset = {
-      p: 'source',
-      title: content.find('h3').text(),
-      description: $('#plot .plot').text(),
-      content: {
-        attrs: content.text().indexOf('导演: ') > 0 ? content.text().split(/导演: /)[1].split(/编剧: /)[0] : '',
-        local: content.text().indexOf('制片国家/地区: ') > 0 ? content.text().split(/制片国家\/地区: /)[1].split(/语言: /)[0] : '',
-        runtime: content.text().indexOf('片长: ') > 0 ? content.text().split(/片长: /)[1].split(/又名: /)[0] : '',
-        date: content.text().indexOf('上映日期: ') > 0 ? content.text().split(/上映日期: /)[1].split(/片长: /)[0] : '',
-        screenwriter: content.text().indexOf('编剧: ') > 0 ? content.text().split(/编剧: /)[1].split(/主演: /)[0] : '',
-        actor: content.text().indexOf('主演: ') > 0 ? content.text().split(/主演: /)[1].split(/类型: /)[0] : '',
-        type: content.text().indexOf('类型: ') > 0 ? content.text().split(/类型: /)[1].split(/制片国家\/地区: /)[0] : '',
-        imdb_href: content.text().indexOf('IMDb链接: ') > 0 ? content.text().split(/IMDb链接: /)[1] : '',
-        douban: {
-          count: content.find('a.db').text(),
-          href: content.eq(0).find('a.db')[0].href
-        },
-        imdb: {
-          count: content.find('a.imdb').text(),
-          href: content.find('a.imdb')[0].href
-        },
-        download: []
-      }
-    }
-    const option = $('#address .option')
-    option.each((index, element) => {
-      let data = {
-        text: option.eq(index).children('a').text(),
-        href: option.eq(index).children('a').attr('href'),
-        size: $('#address .option').eq(index).find('.pull-right').children('span').text(),
-        label: []
-      }
+  async htmlToSearchMovieSourceData (id, type) {
+    let sitepage = null
+    let phInstance = null
+    let dataset = null
 
-      const label = option.find('a.label')
-      option.eq(index).find('a.label').each((i, element) => {
-        let type = {
-          // text: label.eq(i).text(),
-          // url: label.eq(i).attr('data-clipboard-text')
-        }
-        data.label.push(type)
+    await phantom.create()
+      .then(instance => {
+        phInstance = instance
+        return instance.createPage()
       })
-      dataset.content.download.push(data)
-    })
-    return dataset
-  }
+      .then(page => {
+        sitepage = page
+        return page.open(`https://www.bd-film.cc/${ type }/${ id }.htm`)
+      })
+      .then(status => {
+        return sitepage.property('content')
+      })
+      .then(content => {
+        const $ = cheerio.load(content)
+        const _content = $('.content')
+        const option = $('#address .option')
+        dataset = {
+          p: 'source',
+          title: _content.find('h3').text(),
+          description: $('#plot .plot').text(),
+          content: {
+            attrs: _content.text().indexOf('导演: ') > 0 ? _content.text().split(/导演: /)[1].split(/编剧: /)[0] : '',
+            local: _content.text().indexOf('制片国家/地区: ') > 0 ? _content.text().split(/制片国家\/地区: /)[1].split(/语言: /)[0] : '',
+            runtime: _content.text().indexOf('片长: ') > 0 ? _content.text().split(/片长: /)[1].split(/又名: /)[0] : '',
+            date: _content.text().indexOf('上映日期: ') > 0 ? _content.text().split(/上映日期: /)[1].split(/片长: /)[0] : '',
+            screenwriter: _content.text().indexOf('编剧: ') > 0 ? _content.text().split(/编剧: /)[1].split(/主演: /)[0] : '',
+            actor: _content.text().indexOf('主演: ') > 0 ? _content.text().split(/主演: /)[1].split(/类型: /)[0] : '',
+            type: _content.text().indexOf('类型: ') > 0 ? _content.text().split(/类型: /)[1].split(/制片国家\/地区: /)[0] : '',
+            imdb_href: _content.text().indexOf('IMDb链接: ') > 0 ? _content.text().split(/IMDb链接: /)[1] : '',
+            douban: {
+              count: _content.find('a.db').text(),
+              href: _content.eq(0).find('a.db').attr('href')
+            },
+            imdb: {
+              count: _content.find('a.imdb').text(),
+              href: _content.find('a.imdb').attr('href')
+            }
+          },
+          baiduyun: {
+            text: option.last().find('a').text(),
+            pass: option.last().children('span').text(),
+            href: option.last().find('a').attr('href')
+          },
+          download: []
+        }
+        option.each((index, element) => {
+          let data = {
+            text: option.eq(index).children('a').text(),
+            href: option.eq(index).children('a').attr('href'),
+            size: option.eq(index).find('.pull-right').children('span').text(),
+            label: [
+              {
+                color: 'green',
+                text: '下载', // option.eq(index).find('.label.label-info.copybtn').text()
+                href: option.eq(index).find('.label.label-info.copybtn').attr('data-clipboard-text')
+              },
+              {
+                color: 'blue',
+                text: option.eq(index).find('.label.label-info').eq(1).text(),
+                href: option.eq(index).find('.label.label-info').eq(1).attr('href')
+              },
+              {
+                color: 'yellow',
+                text: option.eq(index).find('.label.label-warning').text(),
+                href: option.eq(index).find('.label.label-warning').attr('href')
+              }
+            ]
+          }
+          dataset.download.push(data)
+        })
 
-  htmlToSearchBaiduyunSourceData (html) {
-    const $ = cheerio.load(html.text)
-    const info = $('#info')
-    let dataset = {
-      p: 'baiduyun',
-      title: info.find('h1.filename').text(),
-      info: {
-        size: $('.resource-meta span.meta-item').first().text().split(/文件大小 /)[1],
-        date: $('.resource-meta span.meta-item').last().text().split(/更新时间 /)[1]
-      },
-      detail: []
-    }
-    const detail = $('.detail-inner-wrap .detail-item')
-    detail.each((index, element) => {
-      let item = detail.eq(index).text()
-      dataset.detail.push(item)
-    })
+        sitepage.close()
+      })
+      .catch(error => {
+        sitepage.close()
+      })
 
     return dataset
   }
@@ -78,7 +93,7 @@ class DetailController {
   async htmlToPassBaiduyunSourceData (id) {
     let sitepage = null
     let phInstance = null
-    let baiduyun = null
+    let dataset = null
 
     await phantom.create()
       .then(instance => {
@@ -94,24 +109,36 @@ class DetailController {
       })
       .then(content => {
         const $ = cheerio.load(content)
-        baiduyun = {
-          tips: $('.result-tip').text(),
-          pass: $('.copy-item').text().split(/            点击复制/)[0],
-          href: $('a.button').attr('href')
+        dataset = {
+          p: 'baiduyun',
+          title: $('#info').find('h1.filename').text(),
+          info: {
+            size: $('.resource-meta span.meta-item').first().text().split(/文件大小 /)[1],
+            date: $('.resource-meta span.meta-item').eq(1).text().split(/更新时间 /)[1]
+          },
+          baiduyun: {
+            tips: $('.result-tip').text(),
+            pass: $('.copy-item').text().split(/            点击复制/)[0],
+            href: $('a.button').attr('href')
+          },
+          detail: []
         }
+        const detail = $('.detail-inner-wrap .detail-item')
+        detail.each((index, element) => {
+          let item = detail.eq(index).text()
+          dataset.detail.push(item)
+        })
         sitepage.close()
-        // phInstance.exit()
       })
       .catch(error => {
         sitepage.close()
-        // phInstance.exit()
       })
 
-    return baiduyun
+    return dataset
   }
 
   async htmlToRelationBaiduyunSourceData (wd) {
-    var response = await superagent.get(encodeURI(`https://www.dalipan.com/search?keyword=${ wd }`))
+    const response = await superagent.get(encodeURI(`https://www.dalipan.com/search?keyword=${ wd }`))
     const $ = cheerio.load(response.text)
     const wrap = $('.result-wrap .resource-item-wrap')
     const dataset = []
@@ -141,15 +168,11 @@ class DetailController {
 
   async render ({ request, params, view }) {
     if (request.input('p') == 'baiduyun') {
-      const response = await superagent.get(`https://www.dalipan.com/detail/${ request.input('id') }`)
-      const dataset = await this.htmlToSearchBaiduyunSourceData(response)
-      const baiduyun = await this.htmlToPassBaiduyunSourceData(`${ request.input('id') }`)
-      const relation = await this.htmlToRelationBaiduyunSourceData(`${ dataset.title }`)
-
-      return view.render('source', { dataset, baiduyun, relation })
+      const dataset = await this.htmlToPassBaiduyunSourceData(request.input('id'))
+      const relation = await this.htmlToRelationBaiduyunSourceData(dataset.title)
+      return view.render('source', { dataset, relation })
     } else {
-      const response = await superagent.get(`https://www.bd-film.cc/gq/${ request.input('id') }.htm`)
-      const dataset = this.htmlToSearchMovieSourceData(response)
+      const dataset = await this.htmlToSearchMovieSourceData(request.input('id'), request.input('type'))
       return view.render('source', { dataset })
     }
   }
