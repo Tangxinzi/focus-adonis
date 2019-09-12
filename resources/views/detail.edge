@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <link rel="icon" href="logo-violet.png" />
+  <link rel="icon" href="/logo-violet.png" />
   <title>{{ wd }} - 搜索结果</title>
   {{ style('semantic/dist/semantic.min') }}
   {{ style('style/detail') }}
@@ -66,6 +66,11 @@
         </div>
       </div>
       <div class="sixteen wide mobile five wide computer column">
+        <div class="ui card">
+          <div class="image" style="background: #FFF">
+            <img src="http://v.pipique.com/ad/jkad.png" style="margin: 0 auto; width: 60%;" />
+          </div>
+        </div>
         @each(data in [0, 1, 2])
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
         <ins class="adsbygoogle"
@@ -81,7 +86,7 @@
       </div>
     </div>
   </div>
-  {{ script('http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js') }}
+  {{ script('https://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js') }}
   {{ script('semantic/dist/semantic.min') }}
   <script type="text/javascript">
     $('.tabular.menu .item')

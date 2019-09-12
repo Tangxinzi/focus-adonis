@@ -58,7 +58,6 @@ class DetailController {
 
   async render ({ request, view }) {
     const wd = request.input('wd')
-    console.log(wd)
     var response = await superagent.get(encodeURI(`https://www.bd-film.cc/search.jspx?q=${ wd }`))
     const dataset = this.htmlToSearchMovieData(response)
 

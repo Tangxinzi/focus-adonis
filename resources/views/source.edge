@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <link rel="icon" href="logo-violet.png" />
+  <link rel="icon" href="/logo-violet.png" />
   <title>{{ dataset.title }} - 资源详细</title>
   {{ style('semantic/dist/semantic.min') }}
   {{ style('style/source') }}
@@ -33,9 +33,11 @@
                 <p class="attrs">导演：{{ dataset.content.attrs }}</p>
                 <p class="screenwriter">编剧：{{ dataset.content.screenwriter }}</p>
                 <p class="actor">主演：{{ dataset.content.actor }}</p>
+                <p class="runtime">类型：{{ dataset.content.type }}</p>
                 <p class="runtime">放映时长：{{ dataset.content.runtime }}</p>
                 <p class="time">上映时间：{{ dataset.content.date }}</p>
                 <p class="local">制片国家 / 地区：{{ dataset.content.local }}</p>
+                <p class="local">IMDb：<a href="http://www.imdb.com/title/{{ dataset.content.imdb_href }}" target="_blank">{{ dataset.content.imdb_href }}</a></p>
               </div>
               <div class="extra">
                 @if(dataset.content.douban)
@@ -90,6 +92,11 @@
         @endif
       </div>
       <div class="sixteen wide mobile five wide computer column">
+        <div class="ui card">
+          <div class="image" style="background: #FFF">
+            <img src="http://v.pipique.com/ad/jkad.png" style="margin: 0 auto; width: 60%;" />
+          </div>
+        </div>
         @each(data in [0, 1, 2])
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
         <ins class="adsbygoogle"
