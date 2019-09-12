@@ -2,6 +2,7 @@
 
 const superagent    = use('superagent')
 const cheerio       = use('cheerio')
+const phantom       = use('phantom')
 
 class DetailController {
   htmlToSearchMovieSourceData (html) {
@@ -60,19 +61,92 @@ class DetailController {
       p: 'baiduyun',
       title: info.find('h1.filename').text(),
       info: {
-        size: $('.resource-meta span.meta-item').first().text().split(/文件大小 /),
-        date: $('.resource-meta span.meta-item').last().text().split(/更新时间 /)
-      }
+        size: $('.resource-meta span.meta-item').first().text().split(/文件大小 /)[1],
+        date: $('.resource-meta span.meta-item').last().text().split(/更新时间 /)[1]
+      },
+      detail: []
     }
+    const detail = $('.detail-inner-wrap .detail-item')
+    detail.each((index, element) => {
+      let item = detail.eq(index).text()
+      dataset.detail.push(item)
+    })
 
     return dataset
+  }
+
+  async htmlToPassBaiduyunSourceData (id) {
+    let sitepage = null
+    let phInstance = null
+    let baiduyun = null
+
+    await phantom.create()
+      .then(instance => {
+        phInstance = instance
+        return instance.createPage()
+      })
+      .then(page => {
+        sitepage = page
+        return page.open(`https://www.dalipan.com/detail/${ id }`)
+      })
+      .then(status => {
+        return sitepage.property('content')
+      })
+      .then(content => {
+        const $ = cheerio.load(content)
+        baiduyun = {
+          tips: $('.result-tip').text(),
+          pass: $('.copy-item').text().split(/            点击复制/)[0],
+          href: $('a.button').attr('href')
+        }
+        sitepage.close()
+        // phInstance.exit()
+      })
+      .catch(error => {
+        sitepage.close()
+        // phInstance.exit()
+      })
+
+    return baiduyun
+  }
+
+  async htmlToRelationBaiduyunSourceData (wd) {
+    var response = await superagent.get(encodeURI(`https://www.dalipan.com/search?keyword=${ wd }`))
+    const $ = cheerio.load(response.text)
+    const wrap = $('.result-wrap .resource-item-wrap')
+    const dataset = []
+    wrap.each((index, element) => {
+      let data = {
+        text: wrap.eq(index).find('.valid').text(),
+        href: wrap.eq(index).find('.valid').attr('href').split(/\/detail\//)[1],
+        size: wrap.eq(index).find('span.em').text(),
+        date: wrap.eq(index).find('p.time').text(),
+        detail: []
+      }
+
+      const detail = wrap.eq(index).find('.detail-item-wrap')
+      detail.each((index, element) => {
+        let item = detail.eq(index).text()
+        data.detail.push(item)
+      })
+
+      dataset.push(data)
+    })
+
+    return {
+      num: $('.tip span.em').text(),
+      dataset: dataset
+    }
   }
 
   async render ({ request, params, view }) {
     if (request.input('p') == 'baiduyun') {
       const response = await superagent.get(`https://www.dalipan.com/detail/${ request.input('id') }`)
-      const dataset = this.htmlToSearchBaiduyunSourceData(response)
-      return view.render('source', { dataset })
+      const dataset = await this.htmlToSearchBaiduyunSourceData(response)
+      const baiduyun = await this.htmlToPassBaiduyunSourceData(`${ request.input('id') }`)
+      const relation = await this.htmlToRelationBaiduyunSourceData(`${ dataset.title }`)
+
+      return view.render('source', { dataset, baiduyun, relation })
     } else {
       const response = await superagent.get(`https://www.bd-film.cc/gq/${ request.input('id') }.htm`)
       const dataset = this.htmlToSearchMovieSourceData(response)

@@ -30,7 +30,9 @@
     "semantic-ui": "^2.4.2",
     "superagent": "^5.1.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "phantom": "^6.3.0"
+  },
   "autoload": {
     "App": "./app"
   }

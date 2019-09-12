@@ -19,3 +19,22 @@
 .ui.card .meta * {
   margin: 0;
 }
+
+.baiduyun .description {
+  padding: 1em;
+  background: #f8f8f8;
+  border-radius: 5px;
+  color: #666;
+}
+
+.ui.right.floated {
+  position: relative;
+}
+
+.ui.right.floated img {
+  position: absolute;
+  left: -35px;
+  margin: 0 !important;
+  top: 0;
+  padding: 4px;
+}

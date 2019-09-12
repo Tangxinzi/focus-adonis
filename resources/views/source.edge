@@ -74,10 +74,20 @@
         </div>
         @endif
         @if(dataset.p == 'baiduyun')
-        <div class="ui divided items card">
+        <div class="ui divided items card baiduyun">
           <div class="item">
             <div class="content">
               <a class="header">{{ dataset.title }}</a>
+              <div class="content">
+                <p>{{ dataset.title }}内部结构</p>
+                @if(dataset.detail.length)
+                <div class="description">
+                  @each(detail in dataset.detail)
+                  <p>{{ detail }}</p>
+                  @endeach
+                </div>
+                @endif
+              </div>
               <div class="extra">
                 <a class="ui label">
                   文件大小 {{ dataset.info.size }}
@@ -85,6 +95,28 @@
                 <a class="ui label">
                   更新日期 {{ dataset.info.date }}
                 </a>
+                <div class="ui right floated">
+                  @if(baiduyun.pass)
+                  <span class="ui purple label">
+                    {{ baiduyun.pass }}
+                  </span>
+                  @endif
+                  <a class="ui blue label" href="{{ baiduyun.href }}" target="_blank" rel="noreferrer">
+                    网盘下载
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ui divided items card baiduyun">
+          <div class="item">
+            <div class="content">
+              <div class="header">「{{ dataset.title }}」相关资源</div>
+              <div class="description">
+                @each(data in relation.dataset)
+                <p><a class="header" href="/detail/source?id={{ data.href }}&p=baiduyun">{{ data.text }}</a></p>
+                @endeach
               </div>
             </div>
           </div>
