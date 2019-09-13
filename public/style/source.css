@@ -38,3 +38,12 @@
   top: 0;
   padding: 4px;
 }
+
+.ui.message {
+  padding: 1em 1em;
+}
+
+.ui.message>.close.icon {
+  top: 1em;
+  right: 1em;
+}

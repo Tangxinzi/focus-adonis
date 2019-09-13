@@ -11,10 +11,10 @@
 <body>
   <div class="ui container">
     <div class="ui grid centered">
-      <div class="sixteen wide mobile fifteen wide computer column">
+      <div class="sixteen wide mobile sixteen wide computer column">
         @!component('components.navigator')
       </div>
-      <div class="sixteen wide mobile ten wide computer column">
+      <div class="sixteen wide mobile eleven wide computer column">
         @if(dataset.p == 'source')
         <div class="ui divided items card">
           <div class="item">
@@ -139,21 +139,38 @@
       <div class="sixteen wide mobile five wide computer column">
         <div class="ui card">
           <div class="image" style="background: #FFF">
-            <img src="http://v.pipique.com/ad/jkad.png" style="margin: 0 auto; width: 60%;" />
+            <img src="/images/jp-lite.png" style="margin: 0 auto; width: 60%;" />
           </div>
         </div>
-        @each(data in [0, 1, 2])
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <ins class="adsbygoogle"
-          style="display:block"
-          data-ad-format="fluid"
-          data-ad-layout-key="-f9+5v+4m-d8+7b"
-          data-ad-client="ca-pub-8061733603127258"
-          data-ad-slot="9845064267"></ins>
-        <script>
-          (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-        @endeach
+        <div class="ui card">
+          <div class="content">
+            <div class="header">百度云密码提取</div>
+            <form class="ui fluid action input description" method="post" action="/detail/items">
+              <input type="text" name="url" placeholder="输入提取链接" autocomplete="off" />
+              {{ csrfField() }}
+              <button class="circular ui icon button" type="submit">提交</button>
+            </form>
+            @if(flashMessage('message'))
+              @!component('components.alert', {
+                type: [flashMessage('type')],
+                header: [flashMessage('header')],
+                message: [flashMessage('message')]
+              })
+            @endif
+          </div>
+        </div>
+        <div class="ui card">
+          <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+          <ins class="adsbygoogle"
+            style="display:block"
+            data-ad-format="fluid"
+            data-ad-layout-key="-f9+5v+4m-d8+7b"
+            data-ad-client="ca-pub-8061733603127258"
+            data-ad-slot="9845064267"></ins>
+          <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
       </div>
     </div>
   </div>

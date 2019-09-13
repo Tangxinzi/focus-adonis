@@ -2,8 +2,38 @@
 
 const superagent    = use('superagent')
 const cheerio       = use('cheerio')
+const { validate }  = use('Validator')
+require('superagent-charset')(superagent)
 
 class DetailController {
+  async store ({ request, view, response, session }) {
+    const rules = {
+      url: 'required'
+    }
+    const validation = await validate(request.all(), rules)
+    const result = await superagent.post('http://tools.bugscaner.com/api/baiduyunpassword/')
+      .charset('gbk')
+      .type('form')
+      .send({ baiduyunurl: request.input('url') })
+    const json = JSON.parse(result.text)
+
+    if (json.secess) {
+      session.flash({
+        type: 'blue',
+        header: '验证成功',
+        message: `您可以访问 <a href="${ request.input('url') }" target="_blank" rel="noreferrer">${ request.input('url') }</a>，提取码为 ${ json.info.split(/:/)[1] }`
+      })
+    } else {
+      session.flash({
+        type: 'red',
+        header: '验证失败',
+        message: `请检查您的链接是否正确`
+      })
+    }
+
+    return response.redirect('back')
+  }
+
   htmlToSearchMovieData (html) {
     const dataset = []
     const $ = cheerio.load(html.text)
@@ -56,7 +86,7 @@ class DetailController {
     }
   }
 
-  async render ({ request, view }) {
+  async index ({ request, view }) {
     const wd = request.input('wd')
     var response = await superagent.get(encodeURI(`https://www.bd-film.cc/search.jspx?q=${ wd }`))
     const dataset = this.htmlToSearchMovieData(response)
