@@ -86,8 +86,7 @@
             </div>
           </div>
         </div>
-        @endif
-        @if(dataset.p == 'baiduyun')
+        @elseif(dataset.p == 'baiduyun')
         <div class="ui divided items card baiduyun">
           <div class="item">
             <div class="content">
@@ -130,6 +129,37 @@
               <div class="description">
                 @each(data in relation.dataset)
                 <p><a class="header" href="/detail/source?id={{ data.href }}&p=baiduyun">{{ data.text }}</a></p>
+                @endeach
+              </div>
+            </div>
+          </div>
+        </div>
+        @elseif(dataset.p == 'recommend')
+        <div class="ui divided items card">
+          <div class="item">
+            <div class="content">
+              <a class="header">{{ dataset.title }}</a>
+              <div class="description">
+                {{ dataset.description }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ui divided items card">
+          <div class="content">
+            <div class="meta" style="margin-top: 0;">
+              <div class="ui list">
+                @each(data in dataset.download)
+                @if(data.type != "在线观看")
+                <div class="item">
+                  <div class="right floated content">
+                    <a class="ui label" href="{{ data.href }}" target="_blank" rel="noreferrer">{{ data.type }}</a>
+                  </div>
+                  <div class="content">
+                    <p><a href="{{ data.href }}" target="_blank" target="_blank" rel="noreferrer">{{ data.text }}</a></p>
+                  </div>
+                </div>
+                @endif
                 @endeach
               </div>
             </div>

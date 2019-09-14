@@ -3,6 +3,7 @@
 const superagent    = use('superagent')
 const cheerio       = use('cheerio')
 const phantom       = use('phantom')
+require('superagent-charset')(superagent)
 
 class DetailController {
   async htmlToSearchMovieSourceData (id, type) {
@@ -137,6 +138,30 @@ class DetailController {
     return dataset
   }
 
+  async htmlToSearchRecommendSourceData (id) {
+    const response = await superagent.get(encodeURI(`http://www.hao6v.com${ id }`)).charset('gbk').buffer(true)
+    const $ = cheerio.load(response.text)
+    let dataset = {
+      p: 'recommend',
+      title: $('#main').find('h1').text(),
+      description: $('#endText').text().indexOf('简　　介') > 0 ? $('#endText').text().split(/◎简　　介/)[1].split(/◎获奖情况/)[0] : '暂无简介...',
+      download: []
+    }
+    const detail = $('#endText table tr')
+    detail.each((index, element) => {
+      let type = detail.eq(index).text().split(/：/)[0].replace(/[^\u4E00-\u9FA5]/g,'')
+      if (type != '请勿使用迅雷') {
+        let item = {
+          type: type,
+          text: detail.eq(index).find('a').text(),
+          href: detail.eq(index).find('a').attr('href')
+        }
+        dataset.download.push(item)
+      }
+    })
+    return dataset
+  }
+
   async htmlToRelationBaiduyunSourceData (wd) {
     const response = await superagent.get(encodeURI(`https://www.dalipan.com/search?keyword=${ wd }`))
     const $ = cheerio.load(response.text)
@@ -167,13 +192,24 @@ class DetailController {
   }
 
   async render ({ request, params, view }) {
-    if (request.input('p') == 'baiduyun') {
-      const dataset = await this.htmlToPassBaiduyunSourceData(request.input('id'))
-      const relation = await this.htmlToRelationBaiduyunSourceData(dataset.title)
-      return view.render('source', { dataset, relation })
-    } else {
-      const dataset = await this.htmlToSearchMovieSourceData(request.input('id'), request.input('type'))
-      return view.render('source', { dataset })
+    let dataset
+    switch (request.input('p')) {
+      case 'baiduyun':
+        dataset = await this.htmlToPassBaiduyunSourceData(request.input('id'))
+        const relation = await this.htmlToRelationBaiduyunSourceData(dataset.title)
+        return view.render('source', { dataset, relation })
+        break;
+      case 'source':
+        dataset = await this.htmlToSearchMovieSourceData(request.input('id'), request.input('type'))
+        return view.render('source', { dataset })
+        break;
+      case 'recommend':
+        dataset = await this.htmlToSearchRecommendSourceData(request.input('id'))
+        console.log(dataset)
+        return view.render('source', { dataset })
+        break;
+      default:
+
     }
   }
 }

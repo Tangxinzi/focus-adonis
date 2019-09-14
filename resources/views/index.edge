@@ -5,20 +5,81 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <link rel="icon" href="/logo-violet.png" />
   <title>资源搜索</title>
-  {{ style('https://ji.ferer.net/webapp/semantic/dist/semantic.min.css') }}
+  {{ style('semantic/dist/semantic.min') }}
   {{ style('style/index') }}
   @!component('components.analytics')
 </head>
 <body>
   <div class="ui container">
     <div class="logo"></div>
-    <form method="get" action="/detail/items" class="ui fluid input">
-      <input type="text" name="wd" placeholder="搜索资源" autocomplete="off" />
-    </form>
+    <div class="ui grid centered">
+      <div class="sixteen wide mobile eleven wide computer column">
+        <form class="ui fluid input" method="get" action="/detail/items">
+          <input type="text" name="wd" placeholder="搜索资源" autocomplete="off" />
+        </form>
+      </div>
+    </div>
+    <div class="ui grid centered">
+      <div class="sixteen wide mobile five wide computer column">
+        <div class="ui divided items card">
+          <div class="ui list content">
+            <div class="description">
+              @each(data in dataset.recommend.col1)
+              @if($loop.index < 8)
+              <p class="item"><a target="_blank" href="/detail/source?id={{ data.href }}&p=recommend">{{ data.text }}</a></p>
+              @endif
+              @endeach
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sixteen wide mobile five wide computer column">
+        <div class="ui divided items card">
+          <div class="ui list content">
+            <div class="description">
+              @each(data in dataset.recommend.col3)
+              @if($loop.index < 8)
+              <p class="item">
+                <span class="right floated meta">{{ data.date}}</span>
+                <a target="_blank" href="/detail/source?id={{ data.href }}&p=recommend">{{ data.text }}</a>
+              </p>
+              @endif
+              @endeach
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sixteen wide mobile five wide computer column">
+        <div class="ui divided items card">
+          <div class="ui list content">
+            <div class="description">
+              @each(data in dataset.recommend.col2)
+              @if($loop.index < 8)
+              <p class="item"><a target="_blank" href="/detail/source?id={{ data.href }}&p=recommend">{{ data.text }}</a></p>
+              @endif
+              @endeach
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sixteen wide mobile seven wide computer column" style="display: none">
+        <div class="ui divided items card">
+          <div class="ui list content">
+            <div class="description">
+              @each(data in dataset.meiju)
+              @if($loop.index < 8)
+              <p class="item"><a target="_blank" href="/detail/source?id={{ data.href }}&p=meiju">{{ data.text }}</a></p>
+              @endif
+              @endeach
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <section></section>
   <footer>
-    <p>本平台任何内容由网络爬虫自动抓取，以非人工方式自动生成。不进行储存、复制、传播任何文件，资源文件的完整性需要您自行判断。</p>
+    <p>本平台任何内容由网络自动抓取，以非人工方式生成。且不进行储存、复制、传播任何文件，资源文件的完整性需要您自行判断。</p>
   </footer>
 </body>
 </html>

@@ -13,6 +13,7 @@ class DetailController {
     const validation = await validate(request.all(), rules)
     const result = await superagent.post('http://tools.bugscaner.com/api/baiduyunpassword/')
       .charset('gbk')
+      .buffer(true)
       .type('form')
       .send({ baiduyunurl: request.input('url') })
     const json = JSON.parse(result.text)
@@ -27,7 +28,7 @@ class DetailController {
       session.flash({
         type: 'red',
         header: '验证失败',
-        message: `请检查您的链接是否正确`
+        message: `${ json.info }`
       })
     }
 

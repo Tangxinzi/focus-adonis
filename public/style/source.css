@@ -47,3 +47,14 @@
   top: 1em;
   right: 1em;
 }
+
+.ui.items>.item>.content>.description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+  overflow: hidden;
+}
+
+.ui.label img {
+  display: none !important;
+}
