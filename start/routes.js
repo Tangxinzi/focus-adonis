@@ -19,5 +19,3 @@ const Route = use('Route')
 // Route.on('/').render('welcome')
 
 Route.get('/', 'IndexController.render')
-Route.get('detail', 'DetailController.render')
-Route.get('detail/source', 'DetailController.source')

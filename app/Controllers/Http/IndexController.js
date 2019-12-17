@@ -2,7 +2,7 @@
 
 class IndexController {
   async render ({ request, view }) {
-    return view.render('index')
+    return view.render('welcome')
   }
 }
 
