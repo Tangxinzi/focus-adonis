@@ -1,0 +1,4 @@
+{
+  "greeting": "您好，{name}",
+  "message": "今天是{today, date, longWeekDay}"
+}

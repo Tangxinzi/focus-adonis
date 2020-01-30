@@ -1,0 +1,4 @@
+{
+  "greeting": "hello, {name}",
+  "message": "Today is {today, date, longWeekDay}"
+}
