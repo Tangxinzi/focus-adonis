@@ -92,48 +92,92 @@ class DetailController {
   }
 
   async htmlToPassBaiduyunSourceData (id) {
-    let sitepage = null
-    let phInstance = null
+    // let sitepage = null
+    // let phInstance = null
     let dataset = null
 
-    await phantom.create()
+    // await phantom.create()
+    //   .then(instance => {
+    //     phInstance = instance
+    //     return instance.createPage()
+    //   })
+    //   .then(page => {
+    //     sitepage = page
+    //     return page.open(`https://www.dalipan.com/detail/${ id }`)
+    //   })
+    //   .then(status => {
+    //     return sitepage.property('content')
+    //   })
+    //   .then(content => {
+    //     const $ = cheerio.load(content)
+    //     // $('.baidu-button-inner a.button').click()
+    //     dataset = {
+    //       p: 'baiduyun',
+    //       title: $('#info').find('h1.filename').text(),
+    //       info: {
+    //         size: $('.resource-meta span.meta-item').first().text().split(/文件大小 /)[1],
+    //         date: $('.resource-meta span.meta-item').eq(1).text().split(/更新时间 /)[1]
+    //       },
+    //       baiduyun: {
+    //         tips: $('.result-tip').text(),
+    //         pass: $('.copy-item').text().split(/            点击复制/)[0],
+    //         href: $('.go-baidu a').attr('href')
+    //       },
+    //       detail: []
+    //     }
+    //     const detail = $('.detail-inner-wrap .detail-item')
+    //     detail.each((index, element) => {
+    //       let item = detail.eq(index).text()
+    //       dataset.detail.push(item)
+    //     })
+    //     sitepage.close()
+    //   })
+    //   .catch(error => {
+    //     sitepage.close()
+    //   })
+
+      let sitepage = null; //创建网页对象实例
+      let phInstance = null; //创建phantomj实例对象
+      await phantom.create()
       .then(instance => {
-        phInstance = instance
-        return instance.createPage()
+          phInstance = instance;
+          return instance.createPage();
       })
       .then(page => {
-        sitepage = page
-        return page.open(`https://www.dalipan.com/detail/${ id }`)
+          sitepage = page;
+          return page.open(`https://www.dalipan.com/detail/${ id }`);
       })
       .then(status => {
-        return sitepage.property('content')
+          console.info(status); //获取结果状态
+          return sitepage.property('content'); //获取相应的属性内容
       })
       .then(content => {
-        const $ = cheerio.load(content)
-        dataset = {
-          p: 'baiduyun',
-          title: $('#info').find('h1.filename').text(),
-          info: {
-            size: $('.resource-meta span.meta-item').first().text().split(/文件大小 /)[1],
-            date: $('.resource-meta span.meta-item').eq(1).text().split(/更新时间 /)[1]
-          },
-          baiduyun: {
-            tips: $('.result-tip').text(),
-            pass: $('.copy-item').text().split(/            点击复制/)[0],
-            href: $('a.button').attr('href')
-          },
-          detail: []
-        }
-        const detail = $('.detail-inner-wrap .detail-item')
-        detail.each((index, element) => {
-          let item = detail.eq(index).text()
-          dataset.detail.push(item)
-        })
-        sitepage.close()
+          const $ = cheerio.load(content)
+          console.log($('.baidu-button-inner a.button'));
+          dataset = {
+            p: 'baiduyun',
+            title: $('#info').find('h1.filename').text(),
+            info: {
+              size: $('.resource-meta span.meta-item').first().text().split(/文件大小 /)[1],
+              date: $('.resource-meta span.meta-item').eq(1).text().split(/更新时间 /)[1]
+            },
+            baiduyun: {
+              tips: $('.result-tip').text(),
+              pass: $('.copy-item').text().split(/            点击复制/)[0],
+              href: $('.go-baidu a').attr('href')
+            },
+            detail: []
+          }
+          const detail = $('.detail-inner-wrap .detail-item')
+          detail.each((index, element) => {
+            let item = detail.eq(index).text()
+            dataset.detail.push(item)
+          })
       })
       .catch(error => {
-        sitepage.close()
-      })
+          console.log(error);
+          phInstance.exit();
+      });
 
     return dataset
   }
@@ -163,7 +207,7 @@ class DetailController {
   }
 
   async htmlToRelationBaiduyunSourceData (wd) {
-    const response = await superagent.get(encodeURI(`https://www.dalipan.com/search?keyword=${ wd }`))
+    const response = await superagent.get(`https://www.dalipan.com/search?keyword=${ wd }`)
     const $ = cheerio.load(response.text)
     const wrap = $('.result-wrap .resource-item-wrap')
     const dataset = []
@@ -196,8 +240,8 @@ class DetailController {
     switch (request.input('p')) {
       case 'baiduyun':
         dataset = await this.htmlToPassBaiduyunSourceData(request.input('id'))
-        const relation = await this.htmlToRelationBaiduyunSourceData(dataset.title)
-        return view.render('source', { dataset, relation })
+        // const relation = await this.htmlToRelationBaiduyunSourceData(dataset.title)
+        return { dataset }
         break;
       case 'source':
         dataset = await this.htmlToSearchMovieSourceData(request.input('id'), request.input('type'))
